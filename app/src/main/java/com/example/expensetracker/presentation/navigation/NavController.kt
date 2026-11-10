@@ -8,6 +8,7 @@ import androidx.navigation.toRoute
 import com.example.expensetracker.data.local.ExpenseEntity
 import com.example.expensetracker.presentation.screens.add_expense_screen.AddExpenseScreen
 import com.example.expensetracker.presentation.screens.detailExpense.DetailExpenseCard
+import com.example.expensetracker.presentation.screens.editexpenses.EditExpenses
 import com.example.expensetracker.presentation.screens.history.DetailCategory
 import com.example.expensetracker.presentation.screens.history_screen.HistoryScreen
 import com.example.expensetracker.presentation.screens.home_screen.HomeScreen
@@ -72,6 +73,14 @@ fun NavigationGraph() {
 
 
             DetailExpenseCard(controller= controller,route.expenseId)
+        }
+
+
+        composable<Route.EditExpenses>{backStack->
+
+            val route = backStack.toRoute<Route.EditExpenses>()
+
+            EditExpenses(controller,route.expenseId)
         }
 
 

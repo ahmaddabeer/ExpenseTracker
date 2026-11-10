@@ -24,6 +24,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -52,6 +53,8 @@ fun DetailExpenseCard(controller: NavController,
 
 
 
+    val UpdatedAt = System.currentTimeMillis()
+
 
     val viewModel: ExpenceViewModel = hiltViewModel()
 
@@ -60,6 +63,20 @@ fun DetailExpenseCard(controller: NavController,
     val expense = expense1.find { it.id == expId}
 
     val context = LocalContext.current
+
+
+    LaunchedEffect(expense?.id) {
+
+        expense?.let {
+
+            viewModel.onAmountChange(it.amount.toString())
+            viewModel.onTitleChange(it.title)
+            viewModel.onCategoryChange(it.category)
+            viewModel.onPaymentChange(it.paymentMethod)
+
+
+        }
+    }
 
 
 
@@ -84,7 +101,8 @@ fun DetailExpenseCard(controller: NavController,
                 .padding(innerPadding)
                 .padding(horizontal = 16.dp, vertical = 12.dp),
             verticalArrangement = Arrangement.spacedBy(20.dp)
-        ) {
+        )
+        {
 
             // Category Icon and Amount
             Box(
@@ -185,7 +203,15 @@ fun DetailExpenseCard(controller: NavController,
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text("Date", color = Color.Gray)
+                    Text("CreatedAt", color = Color.Gray)
+                    Text("${expense?.date}", color = Color.Black)
+                }
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text("UpdatedAt", color = Color.Gray)
                     Text("${expense?.date}", color = Color.Black)
                 }
 
@@ -229,6 +255,7 @@ fun DetailExpenseCard(controller: NavController,
                 )
             }
 
+
             // Action Buttons
             Row(
                 modifier = Modifier
@@ -239,7 +266,18 @@ fun DetailExpenseCard(controller: NavController,
             ) {
 
                 Button(
-                    onClick = {},
+                    onClick = {
+
+                        controller.navigate(Route.EditExpenses(expId)){
+
+                            popUpTo<Route.DetailExpenseCard>{
+                                inclusive = true
+                            }
+                            launchSingleTop = true
+                        }
+
+
+                    },
                     modifier = Modifier
                         .weight(1f)
                         .height(50.dp),

@@ -27,6 +27,11 @@ sealed interface Route {
     )
 
 
+
+    @Serializable
+    data class EditExpenses(
+        val expenseId:Int
+    )
     @Serializable
     data class DetailCategory(
         val category: String = "",
