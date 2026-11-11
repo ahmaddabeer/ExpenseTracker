@@ -1,8 +1,6 @@
 package com.example.expensetracker.presentation.screens.add_expense_screen
 
 import android.annotation.SuppressLint
-import android.icu.util.Calendar
-import android.icu.util.TimeZone
 import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
@@ -51,8 +49,10 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.expensetracker.presentation.screens.addexpenses.component.AddExpenseTopBar
-import com.example.expensetracker.presentation.utils.getCurrentDateTime
 import com.example.expensetracker.presentation.viewmodel.ExpenceViewModel
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 private val Green = Color(0xFF16855A)
 private val DarkText = Color(0xFF202A24)
@@ -74,13 +74,6 @@ fun AddExpenseScreen(
     val context = LocalContext.current
 
 
-    val current = getCurrentDateTime()
-
-    val day = current["day"]
-    val month = current["month"]
-    val year = current["year"]
-    val time = current["time"]
-
     val todaySelected = remember { mutableStateOf(false) }
     val choseDateSelected = remember { mutableStateOf(false) }
 
@@ -92,6 +85,25 @@ fun AddExpenseScreen(
     }
 
     val datePickerState = rememberDatePickerState()
+
+    var selectedDate by remember {
+        mutableStateOf<Long?>(null)
+    }
+
+    val dateSelected =
+        selectedDate?.let { SimpleDateFormat("dd MMM yyyy", Locale.getDefault()).format(Date(it)) }
+
+
+    val displayDate = when {
+        todaySelected.value -> SimpleDateFormat(
+            "dd MMM yyyy",
+            Locale.getDefault()
+        ).format(Date())
+
+        choseDateSelected.value -> dateSelected ?: "Choose Date"
+
+        else -> "Date"
+    }
 
 
 
@@ -262,21 +274,11 @@ fun AddExpenseScreen(
 
             Spacer(Modifier.height(20.dp))
 
-            // Date
-            if (todaySelected.value) {
-
-                Text("$day/$month/$year", fontWeight = FontWeight.SemiBold)
-
-            } else if (choseDateSelected.value) {
-
-                Text(expenceViewModel.date, fontWeight = FontWeight.SemiBold)
-
-            } else {
-
-                Text("Date", fontWeight = FontWeight.SemiBold)
 
 
-            }
+            Text(displayDate, fontWeight = FontWeight.SemiBold)
+
+
 
             Spacer(Modifier.height(8.dp))
 
@@ -306,37 +308,11 @@ fun AddExpenseScreen(
                     Text("Today", color = DarkText)
                 }
 
-//                OutlinedButton(
-//                    onClick = {
-//                        todaySelected.value = false
-//                        choseDateSelected.value = true
-//
-//                    },
-//                    modifier = Modifier.weight(1f),
-//                    shape = RoundedCornerShape(12.dp),
-//                    border= if(choseDateSelected.value)BorderStroke(1.dp,Color.Green) else BorderStroke(1.dp,Color.Black)
-//
-//
-//                ) {
-//                    Text("Choose Date", color = DarkText)
-//                }
 
 
                 OutlinedButton(
                     onClick = {
                         showDatePicker = true
-
-
-                        expenceViewModel.onDateChange(
-                            day.toString(),
-                            month.toString(),
-                            year.toString()
-                        )
-
-                        expenceViewModel.onMonthChange(
-                            month1 = month?.toInt() ?: 0
-                        )
-                        expenceViewModel.onTimeChange(time.toString())
 
 
 
@@ -358,31 +334,19 @@ fun AddExpenseScreen(
 
                 if (showDatePicker) {
                     DatePickerDialog(
-                        onDismissRequest = { showDatePicker = false },
+                        onDismissRequest = {
+                            showDatePicker = false
+                        },
                         confirmButton = {
-                            TextButton(onClick = {
-                                datePickerState.selectedDateMillis?.let { millis ->
-                                    val calendar = Calendar.getInstance(
-                                        TimeZone.getTimeZone("UTC")
-                                    )
-                                    calendar.timeInMillis = millis
+                            TextButton(
+                                onClick = {
+                                    datePickerState.selectedDateMillis?.let { millis ->
+                                        selectedDate = millis
+                                    }
 
-                                    expenceViewModel.onDateChange(
-                                        calendar.get(Calendar.DAY_OF_MONTH).toString(),
-                                        (calendar.get(Calendar.MONTH) + 1).toString(),
-                                        calendar.get(Calendar.YEAR).toString()
-                                    )
-
-                                    expenceViewModel.onMonthChange(
-                                        month1 = calendar.get(Calendar.MONTH) + 1
-                                    ).toString()
-
-                                    expenceViewModel.onTimeChange(time.toString())
-
-
+                                    showDatePicker = false
                                 }
-                                showDatePicker = false
-                            }) {
+                            ) {
                                 Text("OK")
                             }
                         }
@@ -414,20 +378,40 @@ fun AddExpenseScreen(
             // Save Button
             Button(
                 onClick = {
+
+                    if (todaySelected.value) {
+
+                        expenceViewModel.onCreatedAt("${System.currentTimeMillis()}")
+                        expenceViewModel.onUpdatedAt("${System.currentTimeMillis()}")
+                    }
+                    if (choseDateSelected.value) {
+
+                        expenceViewModel.onCreatedAt(selectedDate.toString())
+                        expenceViewModel.onUpdatedAt(selectedDate.toString())
+                    }
                     expenceViewModel.saveExpenese()
                     expenceViewModel.onAmountChange("")
                     expenceViewModel.onTitleChange("")
                     expenceViewModel.onNoteChange("")
+                    expenceViewModel.onPaymentChange("")
+                    expenceViewModel.onCategoryChange("Food")
+                    todaySelected.value = false
+                    choseDateSelected.value = false
+                    showDatePicker = false
+                    selectedDate = null
+                    expenceViewModel.onCategoryChange("")
 
 
 
 
 
-                    Toast.makeText(context, "Data Saved", Toast.LENGTH_SHORT).show()
+
+                    Toast.makeText(context, "Your Expense Saved", Toast.LENGTH_SHORT).show()
+                    controller.popBackStack()
 
 
                 },
-                enabled = expenceViewModel.amount.isNotBlank() && expenceViewModel.title.isNotBlank() && todaySelected.value != choseDateSelected.value,
+                enabled = expenceViewModel.amount.isNotBlank() && expenceViewModel.title.isNotBlank() && todaySelected.value != choseDateSelected.value ,
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(54.dp),

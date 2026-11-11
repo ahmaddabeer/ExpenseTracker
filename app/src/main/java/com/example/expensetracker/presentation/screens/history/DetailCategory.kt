@@ -44,7 +44,7 @@ private val GreyText = Color(0xFF858585)
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DetailCategory(controller: NavController, category: String = "") {
+fun DetailCategory(controller: NavController, category: String) {
 
     val viewModel: ExpenceViewModel = hiltViewModel()
     val expenses by viewModel.allExpense.collectAsState()
@@ -57,8 +57,7 @@ fun DetailCategory(controller: NavController, category: String = "") {
         modifier = Modifier.fillMaxSize(),
 
 
-
-    ) { innerPadding ->
+        ) { innerPadding ->
 
         LazyColumn(
             modifier = Modifier
@@ -142,14 +141,10 @@ fun DetailCategory(controller: NavController, category: String = "") {
                     key = { it.id }
                 ) { expenseItem ->
 
-                    Expense(expenseItem,
-                        {
-                            controller.currentBackStackEntry
-                                ?.savedStateHandle
-                                ?.set("expense",expenseItem)
+                    Expense(
+                        expenseItem,
+                        { controller.navigate(Route.DetailExpenseCard(expenseItem.id)) })
 
-                            controller.navigate(Route.DetailExpenseCard(expenseItem.id))
-                        })
 
                 }
             }

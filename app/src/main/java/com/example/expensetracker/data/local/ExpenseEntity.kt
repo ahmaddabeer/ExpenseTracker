@@ -15,9 +15,8 @@ data class ExpenseEntity(
     val amount: Double?,
     val category: String,
     val paymentMethod: String,
-    val date: String,  // "07/11/2026"
-    val time: String,  // "06:30 PM"
-    val month: Int,  // 11
+    val createdAt:Long,
+    val updatedAt: Long,
     val note: String,
 
 

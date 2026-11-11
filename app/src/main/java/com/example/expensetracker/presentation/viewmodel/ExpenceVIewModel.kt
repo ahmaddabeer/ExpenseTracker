@@ -10,7 +10,6 @@ import com.example.expensetracker.data.local.ExpenseEntity
 import com.example.expensetracker.data.repository.ExpenseRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import jakarta.inject.Inject
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
@@ -25,11 +24,11 @@ class ExpenceViewModel @Inject constructor(private val repository: ExpenseReposi
     val paymentMethodList = listOf("Cash", "UPI", "Card")
 
 
-
-
-
-    var date by mutableStateOf("")
+    var expenseId by mutableStateOf(0)
         private set
+    var createdAt by mutableStateOf("")
+        private set
+    var updatedAt by mutableStateOf("")
 
     var amount by mutableStateOf("")
         private set
@@ -45,29 +44,20 @@ class ExpenceViewModel @Inject constructor(private val repository: ExpenseReposi
         private set
 
 
+    fun onIdchange(id:Int){
 
-
-    var time by mutableStateOf("")
-        private set
-
-
-    var month by mutableStateOf(0)
-        private set
-
-    fun onMonthChange(month1:Int){
-
-        month = month1
-    }
-    fun onTimeChange(time1: String) {
-
-        time = time1
+        expenseId = id
     }
 
-    fun onDateChange(day: String, month: String, year: String) {
+    fun onCreatedAt(createdAt2: String) {
 
+        createdAt = createdAt2
 
-        date = "$day/$month/$year"
+    }
 
+    fun onUpdatedAt(updatedAt2: String) {
+
+        updatedAt = updatedAt2
     }
 
 
@@ -138,7 +128,6 @@ class ExpenceViewModel @Inject constructor(private val repository: ExpenseReposi
     var total_spending by mutableFloatStateOf(0f)
 
     private
-
     fun update_spending_change(number: Float) {
 
         total_spending = number
@@ -155,14 +144,13 @@ class ExpenceViewModel @Inject constructor(private val repository: ExpenseReposi
 
             val expenceEntiry = ExpenseEntity(
 
-                id = 0,
+
                 title = title,
                 amount = amount.toDoubleOrNull() ?: return,
                 category = selectedCategory,
                 paymentMethod = selectedPayment,
-                date = date,
-                time = time,
-                month = month,
+                createdAt = createdAt.toLong(),
+                updatedAt = updatedAt.toLong(),
                 note = note
 
             )
@@ -170,6 +158,27 @@ class ExpenceViewModel @Inject constructor(private val repository: ExpenseReposi
             addExpense(expenceEntiry)
 
 
+        }
+    }
+
+    fun onupdateExpense(){
+
+        if(title.isNotBlank() && amount.isNotBlank()){
+
+            val expenceEntity = ExpenseEntity(
+
+
+                id = expenseId,
+                title = title,
+                amount = amount.toDoubleOrNull()?:return,
+                category =  selectedCategory,
+                paymentMethod = selectedPayment,
+                createdAt = createdAt.toLong(),
+                updatedAt = updatedAt.toLong(),
+                note = note
+            )
+
+            updateExpense(expenceEntity)
         }
     }
 
