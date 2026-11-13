@@ -32,22 +32,14 @@ Built using **Kotlin and Jetpack Compose**, following modern Android development
 
 ## 📱 Screenshots
 
-<!-- Add your application screenshots here -->
-
-| Home Screen | Add Expense |
-|---|---|
-| ![Home Screen](screenshots/home.png) | ![Add Expense](screenshots/add_expense.png) |
-
-| Expense Details | Expense History |
-|---|---|
-| ![Expense Details](screenshots/expense_details.png) | ![Expense History](screenshots/history.png) |
+<p align="center">
+  <img width="220" src="https://github.com/user-attachments/assets/12624250-1adb-4dba-be9e-27d0d9de1e27" alt="Expense Tracker Screenshot 1"/>
+  <img width="220" src="https://github.com/user-attachments/assets/f36ed9c7-e7ea-49b1-96cf-f640d1304d24" alt="Expense Tracker Screenshot 2"/>
+  <img width="220" src="https://github.com/user-attachments/assets/22cae224-3eb9-47df-91d8-197bfff5f372" alt="Expense Tracker Screenshot 3"/>
+  <img width="220" src="https://github.com/user-attachments/assets/f8e844cf-f7d2-4114-ab7c-926de957b3b2" alt="Expense Tracker Screenshot 4"/>
+</p>
 
 
-## 🎥 Demo Video
-
-<!-- Add your demo video link here -->
-
-[Watch App Demo](YOUR_VIDEO_LINK_HERE)
 
 ## 🚧 Project Status
 
@@ -92,7 +84,7 @@ Follow these steps to run the project locally.
 ### Clone the Repository
 
 ```bash
-git clone YOUR_GITHUB_REPOSITORY_URL
+git clone https://github.com/ahmaddabeer/ExpenseTracker
 ```
 
 ### Open the Project
